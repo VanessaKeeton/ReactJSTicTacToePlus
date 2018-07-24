@@ -62,6 +62,14 @@ class Game extends React.Component {
       orderAssending: true,
     };
   }
+
+  componentWillMount() {
+	    this.initialState = this.state
+	}
+  
+  reset() {
+  	this.setState(this.initialState);
+  }
   
 
   handleClick(i) {
@@ -69,7 +77,7 @@ class Game extends React.Component {
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     const winner = calculateWinner(current.squares,matrix);
- 
+
     //figure out the coordinates of selected square
     const row = Math.floor((i / matrix) + 1);
     const col = Math.ceil((i % matrix) + 1);
@@ -148,6 +156,7 @@ toggle() {
           <div>{status}</div>
           <ol>{moves}</ol>
           <button onClick={() => this.toggle()}>Reverse</button>
+          <button onClick={() => this.reset()}>Reset Game</button>
         </div>
       </div>
     );
