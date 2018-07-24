@@ -5,7 +5,7 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={props.className} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -24,11 +24,13 @@ class Board extends React.Component {
 		numSquares = (numCols * i)
 		let cols = [];
 		for (let j = numSquares ;j < numCols + numSquares; j++) {
+			console.log(this.props.winner.winningCombination);
        		cols.push(
        			<Square
 			        value={this.props.squares[j]}
 			        key={j}
 			        onClick={() => this.props.onClick(j)}
+			        className = {this.props.winner.winningCombination.includes(j) ? 'winning-square square' : 'square'}
 		      	/>
 		      );
       }
@@ -57,7 +59,7 @@ class Game extends React.Component {
       ],
       stepNumber: 0,
       xIsNext: true,
-      orderAssending: true
+      orderAssending: true,
     };
   }
   
@@ -66,10 +68,8 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
-    if (calculateWinner(squares,matrix) || squares[i]) {
-      return;
-    }
-
+    const winner = calculateWinner(current.squares,matrix);
+ 
     //figure out the coordinates of selected square
     const row = Math.floor((i / matrix) + 1);
     const col = Math.ceil((i % matrix) + 1);
@@ -85,7 +85,8 @@ class Game extends React.Component {
       ]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
-      activeIndex: null
+      activeIndex: null,
+      winner:winner
     });
   }
 
@@ -124,8 +125,8 @@ toggle() {
     }
 
     let status;
-    if (winner) {
-      status = "Winner: " + winner;
+    if (winner.winner !== '') {
+      status = "Winner: " + winner.winner;
     } else {
     	if (current.squares.includes(null)) {
       		status = "Next player: " + (this.state.xIsNext ? "X" : "O");
@@ -139,6 +140,7 @@ toggle() {
         <div className="game-board">
           <Board
             squares={current.squares}
+            winner={winner}
             onClick={i => this.handleClick(i)}
           />
         </div>
@@ -209,10 +211,16 @@ for (let i = 0; i < winningCombinations.length; i++) {
     	});
 
     if (AllValuesSameButNotNull(combination)) {
-      return combination[0];
+      return {
+      	winner : combination[0], 
+      	winningCombination : winningCombinations[i]
+      };
     }
   }
-  return null;
+  return {
+      	winner : '', 
+      	winningCombination : ''
+      };
 }
 
 function AllValuesSameButNotNull(array){
