@@ -70,6 +70,14 @@ class Game extends React.Component {
      });
   }
 
+  marks(max) {
+    const points = {};
+    for (let i = 0; i <= max; i++) {
+                  points[i] = i + 'x' + i;
+                }
+    return points;
+  }
+
   render() {
     const matrix = this.state.matrix;
     const activeIndex = this.state.activeIndex;
@@ -106,14 +114,15 @@ class Game extends React.Component {
     return (
       <div>
         <div className="matrix-slider">
-          <p>Use the slider to change the number of squares in the board square.</p>
+          <p>Use the slider to change the number of squares across and down.</p>
           <Slider
-                style={{ width: 200, display: 'block' }}
+                style={{ width: '50%', display: 'block' }}
                 step={1}
                 min={3}
                 max={20}
                 value={this.state.matrix}
                 onChange={val => this.setState({ matrix: val })}
+                marks={this.marks(20)}
                 disabled={moves[1] ? true : false}
               />
         </div>
@@ -136,7 +145,7 @@ class Game extends React.Component {
       </div>
     );
   }
-  // render
+  //end render
 }
 
 
